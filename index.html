@@ -1,22 +1,17 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>أفضل لاعب فيفا - لوحة نتائج ⚽🎮</title>
+  <title>تقييم الاستراحة - FIFA ⚽🎮</title>
   <style>
     :root{
-      --bg1:#0b1220;
-      --bg2:#0f172a;
+      --bg1:#0b1220; --bg2:#0f172a;
       --card:rgba(255,255,255,.08);
       --stroke:rgba(255,255,255,.14);
-      --text:#e5e7eb;
-      --muted:#9ca3af;
-      --gold:#fbbf24;
-      --silver:#cbd5e1;
-      --ok:#22c55e;
-      --warn:#fb7185;
-      --blue:#60a5fa;
+      --text:#e5e7eb; --muted:#9ca3af;
+      --gold:#fbbf24; --silver:#cbd5e1;
+      --ok:#22c55e; --warn:#fb7185; --blue:#60a5fa;
     }
     *{box-sizing:border-box}
     body{
@@ -32,9 +27,9 @@
       padding:22px;
     }
     .wrap{
-      width:min(1060px, 96vw);
+      width:min(1080px, 96vw);
       display:grid;
-      grid-template-columns: 1.15fr .85fr;
+      grid-template-columns: 1.05fr .95fr;
       gap:16px;
     }
     .card{
@@ -59,32 +54,27 @@
       border:1px solid rgba(255,255,255,.16);
       background:rgba(0,0,0,.12);
       font-size:13px; color:#fff; white-space:nowrap;
+      cursor:pointer;
+      user-select:none;
     }
 
-    /* Scoreboard */
+    /* scoreboard */
     .scoreboard{
       padding:12px 16px;
       border-bottom:1px solid rgba(255,255,255,.10);
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-    }
-    .teams{
-      display:flex; align-items:center; gap:12px;
-      font-weight:800;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
     }
     .team{
-      display:flex; align-items:center; gap:10px;
+      display:flex; align-items:center; justify-content:space-between;
+      gap:10px;
       padding:10px 12px;
       border-radius:14px;
       border:1px solid rgba(255,255,255,.14);
       background:rgba(255,255,255,.06);
       min-width: 170px;
-      justify-content:space-between;
+      font-weight:800;
     }
-    .team .name{ font-weight:800; }
-    .team .g{
+    .g{
       font-size:22px;
       width:34px; height:34px;
       border-radius:12px;
@@ -92,11 +82,12 @@
       color:#111827;
       background:rgba(203,213,225,.95);
     }
-    .team.left .g{ background:rgba(96,165,250,.95); }
-    .team.right .g{ background:rgba(251,191,36,.95); }
+    .gL{ background:rgba(96,165,250,.95); }
+    .gR{ background:rgba(251,191,36,.95); }
     .mid{
       display:flex; flex-direction:column; align-items:center; gap:4px;
       color:var(--muted); font-size:12px;
+      text-align:center;
     }
     .clock{
       font-size:16px; color:#fff; font-weight:900;
@@ -105,16 +96,10 @@
       border:1px solid rgba(255,255,255,.16);
       background:rgba(0,0,0,.14);
       min-width: 78px;
-      text-align:center;
     }
-    .event{
-      font-size:12px;
-      color:var(--muted);
-      text-align:center;
-      max-width: 260px;
-    }
+    .event{ max-width: 300px; }
 
-    /* Voting grid */
+    /* name buttons only (no tags) */
     .grid{
       padding:16px;
       display:grid;
@@ -124,35 +109,27 @@
       height: 420px;
     }
     .pick{
-      padding:14px 14px;
+      padding:16px 14px;
       border-radius:16px;
       border:1px solid rgba(255,255,255,.14);
       background: rgba(255,255,255,.10);
       cursor:pointer;
       transition: transform .15s ease, background .15s ease, border-color .15s ease;
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      display:flex; align-items:center; justify-content:center;
+      font-weight:900;
       user-select:none;
       touch-action: manipulation;
       position:relative;
+      text-align:center;
     }
     .pick:hover{ background: rgba(255,255,255,.16); transform: translateY(-1px); border-color: rgba(255,255,255,.22); }
     .pick:active{ transform: translateY(0); }
-    .name{
-      font-weight:800; font-size:16px;
-      display:flex; align-items:center; gap:10px; min-width:0;
-    }
-    .tag{
-      font-size:12px; padding:5px 10px; border-radius:999px;
-      border:1px solid rgba(255,255,255,.16);
-      color:var(--muted); background: rgba(0,0,0,.10);
-      flex:0 0 auto;
-    }
-    .tag.gold{ color:#111827; background: rgba(251,191,36,.95); border-color: rgba(251,191,36,.75); }
-    .tag.silver{ color:#0f172a; background: rgba(203,213,225,.95); border-color: rgba(203,213,225,.75); }
-    .tag.warn{ color:#111827; background: rgba(251,113,133,.90); border-color: rgba(251,113,133,.7); }
+
+    .runaway{ position:absolute !important; }
 
     .panel{ padding:16px; }
     .panel h2{ margin:0 0 10px; font-size:18px; }
+
     .row{
       display:flex; align-items:center; justify-content:space-between; gap:10px;
       padding:12px; border-radius:14px;
@@ -162,16 +139,17 @@
     }
     .row small{ color:var(--muted); display:block; margin-top:2px; }
     .rating{
-      font-weight:900; font-size:18px;
-      padding:8px 12px; border-radius:12px;
+      font-weight:1000; font-size:20px;
+      padding:10px 12px; border-radius:12px;
       background: rgba(0,0,0,.14);
       border:1px solid rgba(255,255,255,.16);
-      min-width: 72px;
+      min-width: 88px;
       text-align:center;
     }
-    .rating.ok{ color: var(--ok); }
-    .rating.gold{ color: var(--gold); }
-    .rating.warn{ color: var(--warn); }
+    .rating.gold{ color:var(--gold); }
+    .rating.ok{ color:var(--ok); }
+    .rating.warn{ color:var(--warn); }
+    .rating.silver{ color:var(--silver); }
 
     .log{
       margin-top:12px;
@@ -180,13 +158,12 @@
       border:1px dashed rgba(255,255,255,.18);
       background: rgba(0,0,0,.18);
       color: var(--muted);
-      min-height: 130px;
+      min-height: 150px;
       font-size:14px;
       line-height:1.7;
     }
-    .cta{
-      display:flex; gap:10px; margin-top:12px;
-    }
+
+    .cta{ display:flex; gap:10px; margin-top:12px; }
     .mini{
       flex:1;
       border:1px solid rgba(255,255,255,.14);
@@ -197,9 +174,6 @@
       cursor:pointer;
     }
     .mini:hover{ background: rgba(255,255,255,.12); }
-
-    /* runaway */
-    .runaway{ position:absolute !important; }
 
     /* modal */
     .overlay{
@@ -239,18 +213,7 @@
       top:-20px; left:0; opacity:.95; z-index:60;
       animation: fall linear forwards;
     }
-    @keyframes fall{
-      to{ transform: translateY(110vh) rotate(260deg); opacity: .95; }
-    }
-
-    .shake{ animation: shake .16s ease; }
-    @keyframes shake{
-      0%{ transform: translateX(0); }
-      25%{ transform: translateX(6px); }
-      50%{ transform: translateX(-6px); }
-      75%{ transform: translateX(4px); }
-      100%{ transform: translateX(0); }
-    }
+    @keyframes fall{ to{ transform: translateY(110vh) rotate(260deg); opacity: .95; } }
 
     @media (max-width: 900px){
       .wrap{ grid-template-columns: 1fr; }
@@ -262,82 +225,49 @@
 
 <body>
   <div class="wrap">
+
     <!-- LEFT -->
     <section class="card">
       <div class="header">
         <div class="title">
-          <h1>⚽🎮 تصويت الاستراحة — أفضل لاعب فيفا</h1>
-          <p>اختيار واحد… والباقي بيحاسبك 🤣</p>
+          <h1>⚽🎮 تقييم الاستراحة — أفضل لاعب فيفا</h1>
+          <p>اضغط على الاسم… وبتطلع النتيجة + الطقطقة 😂</p>
         </div>
         <div class="pill" id="soundPill">🔊 الصوت: ON</div>
       </div>
 
       <div class="scoreboard">
-        <div class="teams">
-          <div class="team left">
-            <span class="name">Team Office</span>
-            <span class="g" id="gL">0</span>
-          </div>
-          <div class="mid">
-            <div class="clock" id="clock">45'</div>
-            <div class="event" id="event">ابدأ التصويت…</div>
-          </div>
-          <div class="team right">
-            <span class="g" id="gR">0</span>
-            <span class="name">Team FIFA</span>
-          </div>
+        <div class="team">
+          <span>Team Office</span>
+          <span class="g gL" id="gL">0</span>
+        </div>
+        <div class="mid">
+          <div class="clock" id="clock">45'</div>
+          <div class="event" id="event">اضغط اسم عشان تبدأ المباراة…</div>
+        </div>
+        <div class="team">
+          <span class="g gR" id="gR">0</span>
+          <span>Team FIFA</span>
         </div>
       </div>
 
+      <!-- أسماء فقط -->
       <div class="grid" id="grid">
-        <button class="pick" data-type="accept1">
-          <span class="name">محمد العجمي</span>
-          <span class="tag gold">الأفضل 👑</span>
-        </button>
+        <button class="pick" data-type="best">محمد العجمي</button>
+        <button class="pick" data-type="second">خالد الحربي</button>
+        <button class="pick" data-type="second">ابو جود</button>
+        <button class="pick" data-type="silent">سلمان القحطاني</button>
 
-        <button class="pick" data-type="accept2">
-          <span class="name">خالد الحربي</span>
-          <span class="tag silver">ثاني أفضل 🥈</span>
-        </button>
+        <button class="pick" data-type="error">محمد المذكر</button>
+        <button class="pick" data-type="training">فهد الحربي</button>
+        <button class="pick" data-type="torki">تركي الحربي</button>
 
-        <button class="pick" data-type="accept2">
-          <span class="name">ابو جود</span>
-          <span class="tag silver">ثاني أفضل (مكرر) 🥈</span>
-        </button>
-
-        <button class="pick" data-type="silent">
-          <span class="name">سلمان القحطاني</span>
-          <span class="tag">بدون تعليق…</span>
-        </button>
-
-        <button class="pick" data-type="error">
-          <span class="name">محمد المذكر</span>
-          <span class="tag warn">ERROR ❗</span>
-        </button>
-
-        <button class="pick" data-type="training">
-          <span class="name">فهد الحربي</span>
-          <span class="tag warn">تأهيل إلزامي</span>
-        </button>
-
-        <button class="pick" data-type="torki">
-          <span class="name">تركي الحربي</span>
-          <span class="tag warn">كسر كثير 💥</span>
-        </button>
-
-        <button class="pick" data-type="runaway" data-msg="محمد المذكر">
-          <span class="name">يزيد الحربي</span>
-          <span class="tag">يحاول…</span>
-        </button>
-
-        <button class="pick" data-type="runaway" data-msg="ابو منصور">
-          <span class="name">ابو منصور</span>
-          <span class="tag">تقييمه سري 🤐</span>
-        </button>
+        <button class="pick" data-type="runaway">يزيد الحربي</button>
+        <button class="pick" data-type="runaway">ابو منصور</button>
       </div>
 
       <div class="panel" style="padding-top:0">
-        <div class="log" id="log">💬 اختر اسم… وخل نشوف لوحة النتائج وش تقول 😄</div>
+        <div class="log" id="log">💬 سجل التعليقات بيطلع هنا بعد أول ضغطة…</div>
         <div class="cta">
           <button class="mini" id="reset">🔁 Reset</button>
           <button class="mini" id="toggleSound">🔊 تشغيل/إيقاف الصوت</button>
@@ -345,14 +275,14 @@
       </div>
     </section>
 
-    <!-- RIGHT -->
+    <!-- RIGHT (نتيجة/تقييم) -->
     <aside class="card panel">
-      <h2>📺 FIFA Rating + أحداث المباراة</h2>
+      <h2>📺 نتيجة التقييم</h2>
 
       <div class="row">
         <div>
           <strong id="chosen">—</strong>
-          <small id="status">اختر لاعب عشان يطلع تقييمه</small>
+          <small id="status">اضغط أي اسم عشان تظهر النتيجة</small>
         </div>
         <div class="rating" id="rating">--</div>
       </div>
@@ -366,7 +296,7 @@
       </div>
 
       <div class="log" id="sideLog">
-        ✅ ملاحظة: على الجوال لازم أول “لمسة” عشان يشتغل الصوت (قانون المتصفحات).
+        ✅ على الجوال: أول لمسة تفعّل الصوت (قيود المتصفح).
       </div>
     </aside>
   </div>
@@ -386,63 +316,28 @@
   </div>
 
 <script>
-/* =========================
-   WebAudio (بدون ملفات)
-   ========================= */
-let audioOn = true;
-let audioCtx = null;
-
+/* ========= صوت بدون ملفات (WebAudio) ========= */
+let audioOn = true, audioCtx = null;
 function ensureAudio(){
-  if(!audioCtx){
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  }
-  if(audioCtx.state === "suspended"){
-    audioCtx.resume();
-  }
+  if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if(audioCtx.state === "suspended") audioCtx.resume();
 }
-
 function tone(freq=440, dur=0.12, type="sine", gain=0.06){
   if(!audioOn) return;
   ensureAudio();
   const o = audioCtx.createOscillator();
   const g = audioCtx.createGain();
-  o.type = type;
-  o.frequency.value = freq;
+  o.type = type; o.frequency.value = freq;
   g.gain.value = gain;
   o.connect(g); g.connect(audioCtx.destination);
-  o.start();
-  o.stop(audioCtx.currentTime + dur);
+  o.start(); o.stop(audioCtx.currentTime + dur);
 }
+function whistle(){ tone(1200,0.08,"sine",0.05); setTimeout(()=>tone(900,0.10,"sine",0.05),90); }
+function cheer(){ tone(660,0.10,"triangle",0.06); setTimeout(()=>tone(880,0.12,"triangle",0.06),80); }
+function errorBeep(){ tone(220,0.16,"square",0.07); setTimeout(()=>tone(180,0.20,"square",0.07),140); }
+function laugh(){ tone(520,0.06,"sawtooth",0.05); setTimeout(()=>tone(480,0.06,"sawtooth",0.05),70); }
 
-function whistle(){
-  // صافرة
-  tone(1200, 0.08, "sine", 0.05);
-  setTimeout(()=>tone(900, 0.10, "sine", 0.05), 90);
-  setTimeout(()=>tone(1200, 0.08, "sine", 0.05), 200);
-}
-
-function cheer(){
-  // تشجيع بسيط (نغمات متعددة)
-  tone(660, 0.10, "triangle", 0.06);
-  setTimeout(()=>tone(880, 0.12, "triangle", 0.06), 80);
-  setTimeout(()=>tone(990, 0.12, "triangle", 0.06), 170);
-}
-
-function errorBeep(){
-  tone(220, 0.16, "square", 0.07);
-  setTimeout(()=>tone(180, 0.20, "square", 0.07), 140);
-}
-
-function laugh(){
-  // ضحكة كرتونية
-  tone(520, 0.06, "sawtooth", 0.05);
-  setTimeout(()=>tone(480, 0.06, "sawtooth", 0.05), 70);
-  setTimeout(()=>tone(440, 0.06, "sawtooth", 0.05), 140);
-}
-
-/* =========================
-   UI refs
-   ========================= */
+/* ========= عناصر الصفحة ========= */
 const grid = document.getElementById('grid');
 const logEl = document.getElementById('log');
 const sideLog = document.getElementById('sideLog');
@@ -468,244 +363,212 @@ const ratingEl = document.getElementById('rating');
 const lastEventEl = document.getElementById('lastEvent');
 const badgeEl = document.getElementById('badge');
 
-let runawayTries = 0;
-let scoreLeft = 0;
-let scoreRight = 0;
-let minute = 45;
+let runawayTries=0, scoreLeft=0, scoreRight=0, minute=45;
 
-/* =========================
-   helpers
-   ========================= */
-function setLog(text){
-  logEl.innerHTML = text;
-  logEl.classList.remove('shake');
-  void logEl.offsetWidth;
-  logEl.classList.add('shake');
+function openModal(title,big,sub){
+  modalTitle.textContent=title;
+  modalBig.textContent=big;
+  modalSub.textContent=sub;
+  overlay.style.display='flex';
 }
-function setSide(text){
-  sideLog.innerHTML = text;
-}
-function openModal(title, big, sub){
-  modalTitle.textContent = title;
-  modalBig.textContent = big;
-  modalSub.textContent = sub;
-  overlay.style.display = 'flex';
-}
-function closeModal(){ overlay.style.display = 'none'; }
+function closeModal(){ overlay.style.display='none'; }
 closeBtn.addEventListener('click', closeModal);
-overlay.addEventListener('click', (e)=>{ if(e.target === overlay) closeModal(); });
+overlay.addEventListener('click', (e)=>{ if(e.target===overlay) closeModal(); });
 
-function rand(min, max){ return Math.random() * (max - min) + min; }
-
-function confettiBurst(count=80){
-  for(let i=0;i<count;i++){
-    const c = document.createElement('div');
-    c.className = 'confetti';
-    c.style.left = rand(0, 100) + 'vw';
-    c.style.animationDuration = rand(1.8, 3.8) + 's';
-    c.style.transform = `rotate(${rand(0, 360)}deg)`;
-    c.style.background = `hsl(${Math.floor(rand(0,360))} 90% 60%)`;
-    c.style.width = rand(7, 12) + 'px';
-    c.style.height = rand(10, 18) + 'px';
-    document.body.appendChild(c);
-    setTimeout(()=>c.remove(), 4500);
-  }
+function setLog(html){
+  logEl.innerHTML = html;
 }
-
-function tickClock(add=1){
-  minute = Math.min(90, minute + add);
-  clockEl.textContent = `${minute}'`;
+function setSide(html){
+  sideLog.innerHTML = html;
 }
-
-function setEvent(text){
-  eventEl.textContent = text;
-  lastEventEl.textContent = text;
+function setEvent(txt){
+  eventEl.textContent = txt;
+  lastEventEl.textContent = txt;
 }
-
 function updateScore(){
   gL.textContent = scoreLeft;
   gR.textContent = scoreRight;
 }
-
-/* =========================
-   FIFA rating mapping
-   ========================= */
-function setFifaCard(name, rating, mood, badge){
+function tickClock(add=1){
+  minute = Math.min(90, minute + add);
+  clockEl.textContent = `${minute}'`;
+}
+function setFifa(name, rating, cls, badgeText){
   chosenEl.textContent = name;
   ratingEl.textContent = rating;
-  ratingEl.className = "rating " + mood;
-  statusEl.textContent = badge;
+  ratingEl.className = "rating " + (cls||"");
+  statusEl.textContent = badgeText;
 
-  badgeEl.textContent = badge;
-  badgeEl.className = "rating " + mood;
+  badgeEl.textContent = badgeText;
+  badgeEl.className = "rating " + (cls||"");
+}
+function rand(min,max){ return Math.random()*(max-min)+min; }
+function confettiBurst(count=90){
+  for(let i=0;i<count;i++){
+    const c=document.createElement('div');
+    c.className='confetti';
+    c.style.left=rand(0,100)+'vw';
+    c.style.animationDuration=rand(1.8,3.8)+'s';
+    c.style.transform=`rotate(${rand(0,360)}deg)`;
+    c.style.background=`hsl(${Math.floor(rand(0,360))} 90% 60%)`;
+    c.style.width=rand(7,12)+'px';
+    c.style.height=rand(10,18)+'px';
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(),4500);
+  }
 }
 
-/* =========================
-   runaway logic
-   ========================= */
+/* ========= هروب الخيارات الضعيفة ========= */
 function moveRunaway(btn){
   runawayTries++;
   btn.classList.add('runaway');
 
   const g = grid.getBoundingClientRect();
   const b = btn.getBoundingClientRect();
-  const pad = 8;
-  const maxX = Math.max(pad, g.width  - b.width  - pad);
+  const pad=8;
+  const maxX = Math.max(pad, g.width - b.width - pad);
   const maxY = Math.max(pad, g.height - b.height - pad);
 
-  const x = rand(pad, maxX);
-  const y = rand(pad, maxY);
-
-  btn.style.left = x + 'px';
-  btn.style.top  = y + 'px';
+  btn.style.left = rand(pad, maxX) + "px";
+  btn.style.top  = rand(pad, maxY) + "px";
 
   laugh();
   tickClock(1);
   setEvent("هروب تكتيكي 🏃‍♂️💨");
 
-  const name = btn.querySelector('.name')?.textContent?.trim() || "اللاعب";
+  const name = btn.textContent.trim();
   const lines = [
-    `😂 ${name}: "لا لا… لا تقرب!"`,
-    `😭 ${name}: "مو قادر… الزر يرفض!"`,
-    `🫢 ${name}: "VAR يقول: لا تضغط!"`,
-    `🤡 ${name}: "التقييم سري… خلّها مستورة!"`
+    `😂 <b>${name}</b>: "لا لا… لا تقرب!"`,
+    `🫢 <b>${name}</b>: "VAR يقول ممنوع تضغط!"`,
+    `😭 <b>${name}</b>: "خلّها مستورة يا رجال!"`,
+    `🤡 <b>${name}</b>: "التقييم… Confidential!"`
   ];
-  setLog(lines[Math.min(runawayTries-1, lines.length-1)] + `<br><span style="color:#9ca3af">*الخيارات الضعيفة: نظام حماية السمعة شغّال*</span>`);
+  setLog(lines[Math.min(runawayTries-1, lines.length-1)] + `<br><span style="color:#9ca3af">*الخيار يرفض الضغط حفاظاً على السمعة*</span>`);
 }
 
-/* =========================
-   main pick handler
-   ========================= */
+/* ========= منطق النتائج (كل شيء يظهر بعد الضغط) ========= */
 function handlePick(type, label){
-  // أول تفاعل يفعّل الصوت على الجوال
-  ensureAudio();
+  ensureAudio(); // مهم للجوال
 
-  if(type === 'accept1'){
-    scoreRight += 2; // هدفين فخامة
-    updateScore();
+  if(type === "best"){
+    scoreRight += 2; updateScore();
     tickClock(2);
-    setEvent("GOAL! ⚽🔥 (Skill Move + Finish)");
-    cheer();
-    confettiBurst(120);
+    setEvent("GOAL! ⚽🔥 (Skill + Finish)");
+    cheer(); confettiBurst(120);
 
-    setFifaCard("محمد العجمي", "96", "gold", "أفضل لاعب 👑");
-    setLog(`👑 تم اعتماد التصويت: <b>محمد العجمي</b> — الأفضل بدون منازع. <span style="color:#fbbf24">GOAT</span>`);
-    openModal("نتيجة التصويت ✅", "محمد العجمي 👑", "أفضل لاعب فيفا في الاستراحة. تم الإقفال.");
+    setFifa("محمد العجمي", "96", "gold", "أفضل لاعب 👑");
+    setLog(`👑 تم اعتماد التصويت: <b>محمد العجمي</b> — الأفضل بدون منازع.`);
+    openModal("نتيجة التصويت ✅","محمد العجمي 👑","أفضل لاعب فيفا في الاستراحة. تم الإقفال.");
     return;
   }
 
-  if(type === 'accept2'){
-    scoreRight += 1;
-    updateScore();
+  if(type === "second"){
+    scoreRight += 1; updateScore();
     tickClock(1);
     setEvent("GOAL! ⚽ (Second Best)");
-    cheer();
-    confettiBurst(70);
+    cheer(); confettiBurst(70);
 
-    setFifaCard(label, "91", "ok", "ثاني أفضل 🥈");
-    setLog(`🥈 اختيار ممتاز… بس فيه واحد فوق الكل 😄 (ثاني أفضل لاعب)`);
-    openModal("نتيجة التصويت ✅", `${label} 🥈`, "ثاني أفضل لاعب (ومعترف فيه).");
+    setFifa(label, "91", "ok", "ثاني أفضل 🥈");
+    setLog(`🥈 اختيار ممتاز… بس فيه واحد فوق الكل 😄`);
+    openModal("نتيجة التصويت ✅",`${label} 🥈`,"ثاني أفضل لاعب (ومعترف فيه).");
     return;
   }
 
-  if(type === 'silent'){
+  if(type === "silent"){
     tickClock(1);
     setEvent("بدون تعليق… 🤐");
-    whistle(); // صافرة خفيفة
-    setFifaCard("سلمان القحطاني", "--", "", "بدون تعليق");
-    setLog(`🤐 سلمان القحطاني… <b>بدون تعليق</b>.`);
-    openModal("نتيجة التصويت", "سلمان القحطاني 🤐", "بدون تعليق.");
+    whistle();
+
+    setFifa("سلمان القحطاني","--","silver","بدون تعليق");
+    setLog(`🤐 <b>سلمان القحطاني</b>… بدون تعليق.`);
+    // بدون مودال لو تبي، بس خليته لطيف:
+    openModal("نتيجة","سلمان القحطاني 🤐","بدون تعليق.");
     return;
   }
 
-  if(type === 'error'){
+  if(type === "error"){
     tickClock(1);
-    setEvent("OFFSIDE + ERROR ❌");
+    setEvent("ERROR ❌");
     errorBeep();
-    setFifaCard("محمد المذكر", "??", "warn", "لازم تشتغل أكثر");
-    setLog(`❗ محمد المذكر: النظام رجّع خطأ…`);
-    openModal("System Error ❌", "محمد المذكر", "ERROR 422: لازم تشتغل أكثر — التدريب ثم التدريب ثم التدريب 😅");
+
+    setFifa("محمد المذكر","??","warn","لازم تشتغل أكثر");
+    setLog(`❗ <b>محمد المذكر</b>: ERROR 422 — لازم تشتغل أكثر 😅`);
+    openModal("System Error ❌","محمد المذكر","ERROR 422: لازم تشتغل أكثر — التدريب ثم التدريب.");
     return;
   }
 
-  if(type === 'training'){
+  if(type === "training"){
     tickClock(1);
     setEvent("تدريب إلزامي 📚");
     whistle();
-    setFifaCard("فهد الحربي", "74", "warn", "دورات إلزامية");
-    setLog(`📚 فهد الحربي: تم تحويلك للتأهيل…`);
-    openModal("تنبيه تدريبي ⚠️", "فهد الحربي", "عليك دورات تدريبية إلزامية لدى محمد العجمي وخالد الحربي. بعدها نعيد التقييم 🤝");
+
+    setFifa("فهد الحربي","74","warn","دورات إلزامية");
+    setLog(`📚 <b>فهد الحربي</b>: عليك دورات تدريبية إلزامية لدى <b>محمد العجمي</b> و<b>خالد الحربي</b>.`);
+    openModal("تنبيه تدريبي ⚠️","فهد الحربي","عليك دورات إلزامية لدى محمد العجمي وخالد الحربي.");
     return;
   }
 
-  if(type === 'torki'){
+  if(type === "torki"){
     tickClock(1);
     setEvent("Red Card 🟥 (كسر كثير)");
     laugh();
-    setFifaCard("تركي الحربي", "68", "warn", "كسر كثير");
-    setLog(`💥 تركي الحربي: تكسر كثير… حسن لعبك يا بطل 😂`);
-    openModal("تقييم فني 😄", "تركي الحربي 💥", "تقييم سريع: تكسر كثير + تمريرات عشوائية… حسن لعبك وبترجع قوي 😭");
+
+    setFifa("تركي الحربي","68","warn","كسر كثير");
+    setLog(`💥 <b>تركي الحربي</b>: تكسر كثير… حسن لعبك يا بطل 😂`);
+    openModal("تقييم فني 😄","تركي الحربي 💥","تكسر كثير + تمريرات عشوائية… حسن لعبك وبترجع قوي.");
     return;
   }
 }
 
-/* =========================
-   bind buttons
-   ========================= */
+/* ========= ربط الأزرار ========= */
 grid.querySelectorAll('.pick').forEach(btn=>{
   const type = btn.dataset.type;
-  const label = btn.querySelector('.name')?.textContent?.trim() || "—";
+  const label = btn.textContent.trim();
 
-  if(type === 'runaway'){
+  if(type === "runaway"){
     btn.addEventListener('mouseenter', ()=> moveRunaway(btn));
     btn.addEventListener('touchstart', (e)=>{ e.preventDefault(); moveRunaway(btn); }, {passive:false});
     btn.addEventListener('click', (e)=>{ e.preventDefault(); moveRunaway(btn); });
-  } else {
+  }else{
     btn.addEventListener('click', ()=> handlePick(type, label));
   }
 });
 
-/* =========================
-   controls
-   ========================= */
-resetBtn.addEventListener('click', ()=>{
-  runawayTries = 0;
-  scoreLeft = 0; scoreRight = 0; minute = 45;
-  updateScore();
-  clockEl.textContent = "45'";
-  setEvent("ابدأ التصويت…");
-  setLog('💬 اختر اسم… وخل نشوف لوحة النتائج وش تقول 😄');
+/* ========= تحكم بالصوت ========= */
+toggleSoundBtn.addEventListener('click', ()=>{
+  audioOn = !audioOn;
+  soundPill.textContent = audioOn ? "🔊 الصوت: ON" : "🔇 الصوت: OFF";
+  setSide(audioOn ? "✅ الصوت شغال." : "🔇 تم إيقاف الصوت.");
+  if(audioOn) cheer();
+});
+soundPill.addEventListener('click', ()=> toggleSoundBtn.click());
 
-  chosenEl.textContent = "—";
-  statusEl.textContent = "اختر لاعب عشان يطلع تقييمه";
-  ratingEl.textContent = "--";
-  ratingEl.className = "rating";
-  badgeEl.textContent = "—";
-  badgeEl.className = "rating";
-  lastEventEl.textContent = "—";
+/* ========= Reset ========= */
+resetBtn.addEventListener('click', ()=>{
+  runawayTries=0; scoreLeft=0; scoreRight=0; minute=45;
+  updateScore(); clockEl.textContent="45'";
+  setEvent("اضغط اسم عشان تبدأ المباراة…");
+  setLog("💬 سجل التعليقات بيطلع هنا بعد أول ضغطة…");
+
+  chosenEl.textContent="—";
+  statusEl.textContent="اضغط أي اسم عشان تظهر النتيجة";
+  ratingEl.textContent="--";
+  ratingEl.className="rating";
+  badgeEl.textContent="—";
+  badgeEl.className="rating";
+  lastEventEl.textContent="—";
 
   grid.querySelectorAll('[data-type="runaway"]').forEach(btn=>{
     btn.classList.remove('runaway');
-    btn.style.left = '';
-    btn.style.top = '';
+    btn.style.left=''; btn.style.top='';
   });
 
   closeModal();
   whistle();
 });
 
-toggleSoundBtn.addEventListener('click', ()=>{
-  audioOn = !audioOn;
-  soundPill.textContent = audioOn ? "🔊 الصوت: ON" : "🔇 الصوت: OFF";
-  setSide(audioOn
-    ? "✅ الصوت شغال. (على الجوال: أول لمسة تفعّل الصوت)"
-    : "🔇 تم إيقاف الصوت.");
-  if(audioOn) cheer();
-});
-
-/* ESC close modal */
+/* ESC */
 window.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') closeModal(); });
-
 </script>
 </body>
 </html>
