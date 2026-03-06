@@ -1,604 +1,210 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>نتائج التقييم العام — FIFA الاستراحة</title>
-  <style>
-    :root{
-      --bg1:#0b1220; --bg2:#0f172a;
-      --card:rgba(255,255,255,.08);
-      --stroke:rgba(255,255,255,.14);
-      --text:#e5e7eb; --muted:#9ca3af;
-      --gold:#fbbf24; --silver:#cbd5e1;
-      --ok:#22c55e; --warn:#fb7185; --blue:#60a5fa;
-    }
-    *{box-sizing:border-box}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>قرعة الفرق ⚽</title>
 
-    /* ✅ مهم: خلي الصفحة تقدر تسكرول */
-    body{
-      margin:0;
-      min-height:100vh;
-      overflow:auto;
-      font-family: system-ui, -apple-system, "Segoe UI", Arial;
-      color:var(--text);
-      background:
-        radial-gradient(1200px 600px at 10% 10%, rgba(59,130,246,.22), transparent 60%),
-        radial-gradient(900px 500px at 90% 20%, rgba(16,185,129,.14), transparent 60%),
-        radial-gradient(900px 500px at 60% 90%, rgba(236,72,153,.12), transparent 60%),
-        linear-gradient(135deg, var(--bg1), var(--bg2));
-      display:flex;
-      justify-content:center;
-      padding:18px;
-    }
+<style>
 
-    .wrap{
-      width:min(1080px, 96vw);
-      display:grid;
-      grid-template-columns: 1.05fr .95fr;
-      gap:16px;
-      align-items:start;
-    }
+body{
+font-family: Arial;
+background:url("https://images.unsplash.com/photo-1508098682722-e99c43a406b2") no-repeat center;
+background-size:cover;
+color:white;
+text-align:center;
+padding:30px;
+}
 
-    .card{
-      background:var(--card);
-      border:1px solid var(--stroke);
-      border-radius:18px;
-      backdrop-filter: blur(10px);
-      box-shadow: 0 22px 70px rgba(0,0,0,.35);
-      overflow:hidden;
-      position:relative;
-    }
+.container{
+background:rgba(0,0,0,0.7);
+padding:25px;
+border-radius:15px;
+max-width:600px;
+margin:auto;
+}
 
-    .header{
-      padding:16px 16px 10px;
-      border-bottom:1px solid rgba(255,255,255,.10);
-      display:flex; align-items:flex-start; justify-content:space-between; gap:12px;
-    }
-    .title h1{ margin:0; font-size: clamp(18px, 3.2vw, 28px); }
-    .title p{ margin:6px 0 0; color:var(--muted); font-size:14px; line-height:1.7; }
+input{
+padding:10px;
+margin:5px;
+border-radius:8px;
+border:none;
+width:80%;
+}
 
-    .pill{
-      display:inline-flex; gap:8px; align-items:center;
-      padding:8px 12px; border-radius:999px;
-      border:1px solid rgba(255,255,255,.16);
-      background:rgba(0,0,0,.12);
-      font-size:13px; color:#fff; white-space:nowrap;
-      cursor:pointer;
-      user-select:none;
-    }
+button{
+padding:12px 20px;
+margin-top:10px;
+border:none;
+border-radius:10px;
+background:#00c853;
+color:white;
+font-size:16px;
+cursor:pointer;
+}
 
-    /* scoreboard */
-    .scoreboard{
-      padding:12px 16px;
-      border-bottom:1px solid rgba(255,255,255,.10);
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-      flex-wrap:wrap;
-    }
-    .team{
-      display:flex; align-items:center; justify-content:space-between;
-      gap:10px;
-      padding:10px 12px;
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,.14);
-      background:rgba(255,255,255,.06);
-      min-width: 170px;
-      font-weight:800;
-    }
-    .g{
-      font-size:22px;
-      width:34px; height:34px;
-      border-radius:12px;
-      display:grid; place-items:center;
-      color:#111827;
-      background:rgba(203,213,225,.95);
-    }
-    .gL{ background:rgba(96,165,250,.95); }
-    .gR{ background:rgba(251,191,36,.95); }
+button:hover{
+background:#00e676;
+}
 
-    .mid{
-      flex:1;
-      display:flex; flex-direction:column; align-items:center; gap:4px;
-      color:var(--muted); font-size:12px;
-      text-align:center;
-      min-width: 180px;
-    }
-    .clock{
-      font-size:16px; color:#fff; font-weight:900;
-      padding:6px 10px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.16);
-      background:rgba(0,0,0,.14);
-      min-width: 78px;
-    }
-    .event{ max-width: 520px; }
+.team{
+background:rgba(255,255,255,0.1);
+margin:10px;
+padding:12px;
+border-radius:10px;
+font-size:18px;
+}
 
-    /* ✅ بدون ارتفاع ثابت: يتمدد حسب عدد الأسماء */
-    .grid{
-      padding:16px;
-      display:grid;
-      grid-template-columns: repeat(2, minmax(0,1fr));
-      gap:12px;
-    }
+.reserve{
+color:yellow;
+font-weight:bold;
+font-size:20px;
+}
 
-    .pick{
-      padding:16px 14px;
-      border-radius:16px;
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(255,255,255,.10);
-      cursor:pointer;
-      transition: transform .15s ease, background .15s ease, border-color .15s ease;
-      display:flex; align-items:center; justify-content:center;
-      font-weight:900;
-      user-select:none;
-      touch-action: manipulation;
-      position:relative;
-      text-align:center;
-      min-height: 54px;
-    }
-    .pick:hover{ background: rgba(255,255,255,.16); transform: translateY(-1px); border-color: rgba(255,255,255,.22); }
-    .pick:active{ transform: translateY(0); }
-
-    .panel{ padding:16px; }
-    .panel h2{ margin:0 0 10px; font-size:18px; }
-
-    .row{
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-      padding:12px; border-radius:14px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.06);
-      margin-top:10px;
-    }
-    .row small{ color:var(--muted); display:block; margin-top:2px; }
-
-    .rating{
-      font-weight:1000; font-size:20px;
-      padding:10px 12px; border-radius:12px;
-      background: rgba(0,0,0,.14);
-      border:1px solid rgba(255,255,255,.16);
-      min-width: 104px;
-      text-align:center;
-    }
-    .rating.gold{ color:var(--gold); }
-    .rating.ok{ color:var(--ok); }
-    .rating.warn{ color:var(--warn); }
-    .rating.silver{ color:var(--silver); }
-
-    .log{
-      margin-top:12px;
-      padding:12px;
-      border-radius:14px;
-      border:1px dashed rgba(255,255,255,.18);
-      background: rgba(0,0,0,.18);
-      color: var(--muted);
-      min-height: 140px;
-      font-size:14px;
-      line-height:1.7;
-    }
-
-    .cta{ display:flex; gap:10px; margin-top:12px; flex-wrap:wrap; }
-    .mini{
-      flex:1;
-      min-width: 160px;
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(255,255,255,.08);
-      color: var(--text);
-      padding:10px 12px;
-      border-radius:12px;
-      cursor:pointer;
-    }
-    .mini:hover{ background: rgba(255,255,255,.12); }
-
-    /* modal */
-    .overlay{
-      position:fixed; inset:0;
-      background: rgba(0,0,0,.55);
-      display:none; align-items:center; justify-content:center;
-      padding:18px; z-index: 50;
-    }
-    .modal{
-      width:min(640px, 96vw);
-      border-radius:18px;
-      border:1px solid rgba(255,255,255,.18);
-      background: rgba(17,24,39,.92);
-      box-shadow: 0 30px 90px rgba(0,0,0,.50);
-      overflow:hidden;
-    }
-    .modalHead{
-      padding:14px 16px;
-      border-bottom:1px solid rgba(255,255,255,.12);
-      display:flex; align-items:center; justify-content:space-between; gap:12px;
-    }
-    .close{
-      border:none;
-      background: rgba(255,255,255,.10);
-      color: var(--text);
-      padding:8px 10px;
-      border-radius:10px;
-      cursor:pointer;
-    }
-    .modalBody{ padding:16px; line-height:1.7; }
-    .big{ font-size: clamp(20px, 3.4vw, 28px); margin:0 0 8px; }
-    .sub{ margin:0; color: var(--muted); }
-
-    /* confetti */
-    .confetti{
-      position:fixed; width:10px; height:14px; border-radius:3px;
-      top:-20px; left:0; opacity:.95; z-index:60;
-      animation: fall linear forwards;
-    }
-    @keyframes fall{ to{ transform: translateY(110vh) rotate(260deg); opacity: .95; } }
-
-    @media (max-width: 900px){
-      .wrap{ grid-template-columns: 1fr; }
-      .team{ min-width: 150px; }
-      .grid{ grid-template-columns: 1fr; }
-      .pick{ min-height: 56px; }
-    }
-  </style>
+</style>
 </head>
 
 <body>
-  <div class="wrap">
 
-    <!-- LEFT -->
-    <section class="card">
-      <div class="header">
-        <div class="title">
-          <h1>⚽🎮 نتائج التقييم العام — لعبة FIFA في الاستراحة</h1>
-          <p>
-            للإحاطة، تم إصدار النتائج وفقًا لانطباع الأداء العام خلال مباريات الاستراحة، مع مراعاة عناصر
-            التحكّم، التمرير، الإنهاء، والالتزام التكتيكي.
-            <br>اختر الاسم للاطلاع على بطاقة التقييم المعتمدة.
-          </p>
-        </div>
-        <div class="pill" id="soundPill">🔊 الصوت: ON</div>
-      </div>
+<div class="container">
 
-      <div class="scoreboard">
-        <div class="team">
-          <span>Team Office</span>
-          <span class="g gL" id="gL">0</span>
-        </div>
-        <div class="mid">
-          <div class="clock" id="clock">45'</div>
-          <div class="event" id="event">جلسة تقييم — جاهزية التحليل مفعّلة</div>
-        </div>
-        <div class="team">
-          <span class="g gR" id="gR">0</span>
-          <span>Team FIFA</span>
-        </div>
-      </div>
+<h1>⚽ قرعة فرق الاستراحة</h1>
 
-      <!-- أسماء فقط -->
-      <div class="grid" id="grid">
-        <button class="pick" data-type="best">محمد العجمي</button>
-        <button class="pick" data-type="second">خالد الحربي</button>
-        <button class="pick" data-type="second">ابو جود</button>
-        <button class="pick" data-type="silent">سلمان القحطاني</button>
+<div id="step1">
 
-        <button class="pick" data-type="bestButOh">ابو لارا</button>
+<p>ادخل عدد اللاعبين</p>
 
-        <button class="pick" data-type="errorMemo">محمد المذكر</button>
-        <button class="pick" data-type="training">فهد الحربي</button>
-        <button class="pick" data-type="torki">تركي الحربي</button>
+<input type="number" id="playersCount" placeholder="عدد اللاعبين">
 
-        <button class="pick" data-type="yazid">يزيد الحربي</button>
-        <button class="pick" data-type="errorMansoor">ابو منصور</button>
+<br>
 
-        <button class="pick" data-type="last">مويد الحربي</button>
-      </div>
+<button onclick="createInputs()">التالي</button>
 
-      <div class="panel" style="padding-top:0">
-        <div class="log" id="log">💬 سجل التعليقات: لم يتم تسجيل أي نتيجة حتى الآن.</div>
-        <div class="cta">
-          <button class="mini" id="reset">🔁 Reset</button>
-          <button class="mini" id="toggleSound">🔊 تشغيل/إيقاف الصوت</button>
-        </div>
-      </div>
-    </section>
+</div>
 
-    <!-- RIGHT -->
-    <aside class="card panel">
-      <h2>📺 بطاقة التقييم</h2>
 
-      <div class="row">
-        <div>
-          <strong id="chosen">—</strong>
-          <small id="status">اختر اسمًا لعرض التقييم</small>
-        </div>
-        <div class="rating" id="rating">--</div>
-      </div>
+<div id="step2" style="display:none">
 
-      <div class="row">
-        <div>
-          <strong>آخر حدث</strong>
-          <small id="lastEvent">—</small>
-        </div>
-        <div class="rating" id="badge">—</div>
-      </div>
+<h3>ادخل أسماء اللاعبين</h3>
 
-      <div class="log" id="sideLog">
-        ✅ ملاحظة: على الجوال، أول تفاعل يفعّل الصوت (متطلبات المتصفح).
-      </div>
-    </aside>
-  </div>
+<div id="playersInputs"></div>
 
-  <!-- Modal -->
-  <div class="overlay" id="overlay">
-    <div class="modal">
-      <div class="modalHead">
-        <strong id="modalTitle">نتيجة</strong>
-        <button class="close" id="close">إغلاق</button>
-      </div>
-      <div class="modalBody">
-        <h3 class="big" id="modalBig">—</h3>
-        <p class="sub" id="modalSub">—</p>
-      </div>
-    </div>
-  </div>
+<button onclick="drawTeams()">🎲 سوِّ قرعة الفرق</button>
+
+</div>
+
+
+<div id="result"></div>
+
+</div>
+
+<audio id="whistle">
+<source src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3">
+</audio>
 
 <script>
-/* ========= صوت بدون ملفات (WebAudio) ========= */
-let audioOn = true, audioCtx = null;
-function ensureAudio(){
-  if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  if(audioCtx.state === "suspended") audioCtx.resume();
-}
-function tone(freq=440, dur=0.12, type="sine", gain=0.06){
-  if(!audioOn) return;
-  ensureAudio();
-  const o = audioCtx.createOscillator();
-  const g = audioCtx.createGain();
-  o.type = type; o.frequency.value = freq;
-  g.gain.value = gain;
-  o.connect(g); g.connect(audioCtx.destination);
-  o.start(); o.stop(audioCtx.currentTime + dur);
-}
-function whistle(){ tone(1200,0.08,"sine",0.05); setTimeout(()=>tone(900,0.10,"sine",0.05),90); }
-function cheer(){ tone(660,0.10,"triangle",0.06); setTimeout(()=>tone(880,0.12,"triangle",0.06),80); }
-function errorBeep(){ tone(220,0.16,"square",0.07); setTimeout(()=>tone(180,0.20,"square",0.07),140); }
-function laughAnnoying(){
-  tone(820,0.05,"sawtooth",0.07);
-  setTimeout(()=>tone(760,0.05,"sawtooth",0.07),55);
-  setTimeout(()=>tone(900,0.05,"sawtooth",0.07),110);
-  setTimeout(()=>tone(740,0.06,"sawtooth",0.07),170);
-  setTimeout(()=>tone(680,0.06,"sawtooth",0.07),235);
+
+function createInputs(){
+
+let count = document.getElementById("playersCount").value;
+
+let container = document.getElementById("playersInputs");
+
+container.innerHTML="";
+
+for(let i=1;i<=count;i++){
+
+container.innerHTML+=`
+<input placeholder="اسم اللاعب ${i}">
+`;
+
 }
 
-/* ========= عناصر الصفحة ========= */
-const grid = document.getElementById('grid');
-const logEl = document.getElementById('log');
-const sideLog = document.getElementById('sideLog');
+document.getElementById("step2").style.display="block";
 
-const overlay = document.getElementById('overlay');
-const closeBtn = document.getElementById('close');
-const modalTitle = document.getElementById('modalTitle');
-const modalBig = document.getElementById('modalBig');
-const modalSub = document.getElementById('modalSub');
-
-const resetBtn = document.getElementById('reset');
-const toggleSoundBtn = document.getElementById('toggleSound');
-const soundPill = document.getElementById('soundPill');
-
-const gL = document.getElementById('gL');
-const gR = document.getElementById('gR');
-const clockEl = document.getElementById('clock');
-const eventEl = document.getElementById('event');
-
-const chosenEl = document.getElementById('chosen');
-const statusEl = document.getElementById('status');
-const ratingEl = document.getElementById('rating');
-const lastEventEl = document.getElementById('lastEvent');
-const badgeEl = document.getElementById('badge');
-
-let scoreLeft=0, scoreRight=0, minute=45;
-
-function openModal(title,big,sub){
-  modalTitle.textContent=title;
-  modalBig.textContent=big;
-  modalSub.textContent=sub;
-  overlay.style.display='flex';
-}
-function closeModal(){ overlay.style.display='none'; }
-closeBtn.addEventListener('click', closeModal);
-overlay.addEventListener('click', (e)=>{ if(e.target===overlay) closeModal(); });
-
-function setLog(html){ logEl.innerHTML = html; }
-function setSide(html){ sideLog.innerHTML = html; }
-function setEvent(txt){
-  eventEl.textContent = txt;
-  lastEventEl.textContent = txt;
-}
-function updateScore(){
-  gL.textContent = scoreLeft;
-  gR.textContent = scoreRight;
-}
-function tickClock(add=1){
-  minute = Math.min(90, minute + add);
-  clockEl.textContent = `${minute}'`;
-}
-function setFifa(name, rating, cls, badgeText){
-  chosenEl.textContent = name;
-  ratingEl.textContent = rating;
-  ratingEl.className = "rating " + (cls||"");
-  statusEl.textContent = badgeText;
-
-  badgeEl.textContent = badgeText;
-  badgeEl.className = "rating " + (cls||"");
-}
-function rand(min,max){ return Math.random()*(max-min)+min; }
-function confettiBurst(count=90){
-  for(let i=0;i<count;i++){
-    const c=document.createElement('div');
-    c.className='confetti';
-    c.style.left=rand(0,100)+'vw';
-    c.style.animationDuration=rand(1.8,3.8)+'s';
-    c.style.transform=`rotate(${rand(0,360)}deg)`;
-    c.style.background=`hsl(${Math.floor(rand(0,360))} 90% 60%)`;
-    c.style.width=rand(7,12)+'px';
-    c.style.height=rand(10,18)+'px';
-    document.body.appendChild(c);
-    setTimeout(()=>c.remove(),4500);
-  }
 }
 
-/* ========= منطق النتائج ========= */
-function handlePick(type, label){
-  ensureAudio();
 
-  if(type === "best"){
-    scoreRight += 2; updateScore();
-    tickClock(2);
-    setEvent("GOAL! ⚽🔥 (Elite Finish)");
-    cheer(); confettiBurst(120);
+function shuffle(array){
 
-    setFifa("محمد العجمي", "96", "gold", "أفضل لاعب 👑");
-    setLog(`👑 تم اعتماد النتيجة: <b>محمد العجمي</b> — الأفضل بدون منازع.`);
-    openModal("نتيجة التقييم ✅","محمد العجمي 👑","تم تصنيف اللاعب كأفضل لاعب فيفا في الاستراحة.");
-    return;
-  }
+for (let i = array.length - 1; i > 0; i--) {
 
-  if(type === "second"){
-    scoreRight += 1; updateScore();
-    tickClock(1);
-    setEvent("GOAL! ⚽ (Second Tier)");
-    cheer(); confettiBurst(70);
+const j = Math.floor(Math.random() * (i + 1));
 
-    setFifa(label, "91", "ok", "ثاني أفضل 🥈");
-    setLog(`🥈 نتيجة معتمدة: <b>${label}</b> ضمن فئة “ثاني أفضل لاعب”.`);
-    openModal("نتيجة التقييم ✅",`${label} 🥈`,"مصنّف ضمن فئة ثاني أفضل لاعب.");
-    return;
-  }
+[array[i], array[j]] = [array[j], array[i]];
 
-  if(type === "silent"){
-    tickClock(1);
-    setEvent("بدون تعليق… 🤐");
-    whistle();
-
-    setFifa("سلمان القحطاني","--","silver","بدون تعليق");
-    setLog(`🤐 <b>سلمان القحطاني</b> — بدون تعليق.`);
-    openModal("نتيجة","سلمان القحطاني 🤐","بدون تعليق.");
-    return;
-  }
-
-  if(type === "bestButOh"){
-    tickClock(1);
-    setEvent("Almost… لكن! 😅");
-    whistle();
-
-    setFifa("ابو لارا","83","silver","كان من الأفضل… ولكن");
-    setLog(`😮‍💨 <b>ابو لارا</b>: كان من الأفضل… <b>ولكن أخ</b> (انقطعت السلسلة باللمسة الأخيرة 😭).`);
-    openModal("ملاحظة تقييمية 😄","ابو لارا","كان من الأفضل… ولكن أخ 😅");
-    return;
-  }
-
-  if(type === "errorMemo"){
-    tickClock(1);
-    setEvent("ERROR ❌ (Performance Gap)");
-    laughAnnoying();
-
-    setFifa("محمد المذكر","??","warn","لازم تشتغل أكثر");
-    setLog(`❗ <b>محمد المذكر</b>: ERROR 422 — لازم تشتغل أكثر (السكيلز مو جاهزة 😅).`);
-    openModal("System Error ❌","محمد المذكر","ERROR 422: لازم تشتغل أكثر — وتحتاج ترفع المستوى بشكل واضح.");
-    return;
-  }
-
-  if(type === "training"){
-    tickClock(1);
-    setEvent("توجيه للتأهيل 📚");
-    laughAnnoying();
-
-    setFifa("فهد الحربي","74","warn","دورات إلزامية");
-    setLog(`📚 <b>فهد الحربي</b>: تم توجيهك لدورات تدريبية إلزامية لدى <b>محمد العجمي</b> و<b>خالد الحربي</b>.`);
-    openModal("تنبيه تدريبي ⚠️","فهد الحربي","عليك دورات إلزامية لدى محمد العجمي وخالد الحربي، ثم إعادة تقييم.");
-    return;
-  }
-
-  if(type === "torki"){
-    tickClock(1);
-    setEvent("Red Card 🟥 (Excessive Tackles)");
-    whistle();
-
-    setFifa("تركي الحربي","68","warn","كسر كثير");
-    setLog(`💥 <b>تركي الحربي</b>: تكسر كثير… التزم تكتيكياً وحسّن لعبك 😂`);
-    openModal("تقييم فني 😄","تركي الحربي 💥","ملاحظة: تكسر كثير + اندفاع… حسّن لعبك وبترجع قوي.");
-    return;
-  }
-
-  if(type === "yazid"){
-    tickClock(1);
-    setEvent("توصية: تغيير اللعبة 🎯");
-    whistle();
-
-    setFifa("يزيد الحربي","59","warn","ببجي أفضل لك");
-    setLog(`🎮 <b>يزيد الحربي</b>: ببجي أفضل لك… فيفا خلّها مؤقتاً 😭`);
-    openModal("توصية 😄","يزيد الحربي","ببجي أفضل لك — خذ لك سولو سكواد وخل الفيفا علينا.");
-    return;
-  }
-
-  if(type === "errorMansoor"){
-    tickClock(1);
-    setEvent("ERROR ❌ (Needs Experience)");
-    errorBeep();
-
-    setFifa("ابو منصور","??","warn","يبيلك سنين ممارسة");
-    setLog(`❗ <b>ابو منصور</b>: ERROR 500 — يبيلك سنين ممارسة… وتعال بعدين 😂`);
-    openModal("System Error ❌","ابو منصور","التقييم غير متاح حالياً: يلزم سنوات ممارسة + جلسات تدريب + خبرة ميدانية.");
-    return;
-  }
-
-  if(type === "last"){
-    tickClock(1);
-    setEvent("Bottom of Table 🫠");
-    errorBeep();
-
-    setFifa("مويد الحربي","48","warn","المركز الأخير");
-    setLog(`🥲 <b>مويد الحربي</b>: المركز الأخير… بس نقدر نعتبرها “خطة بعيدة المدى” 😭`);
-    openModal("الترتيب العام 😅","مويد الحربي","المركز الأخير — نحتاج إعادة بناء شاملة.");
-    return;
-  }
 }
 
-/* ربط الأزرار */
-grid.querySelectorAll('.pick').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    const type = btn.dataset.type;
-    const label = btn.textContent.trim();
-    handlePick(type, label);
-  });
+return array;
+
+}
+
+
+function drawTeams(){
+
+document.getElementById("whistle").play();
+
+let inputs=document.querySelectorAll("#playersInputs input");
+
+let players=[];
+
+inputs.forEach(i=>{
+
+if(i.value!="") players.push(i.value);
+
 });
 
-/* تحكم بالصوت */
-toggleSoundBtn.addEventListener('click', ()=>{
-  audioOn = !audioOn;
-  soundPill.textContent = audioOn ? "🔊 الصوت: ON" : "🔇 الصوت: OFF";
-  setSide(audioOn ? "✅ الصوت شغال." : "🔇 تم إيقاف الصوت.");
-  if(audioOn) cheer();
-});
-soundPill.addEventListener('click', ()=> toggleSoundBtn.click());
+players=shuffle(players);
 
-/* Reset */
-resetBtn.addEventListener('click', ()=>{
-  scoreLeft=0; scoreRight=0; minute=45;
-  updateScore(); clockEl.textContent="45'";
-  setEvent("جلسة تقييم — جاهزية التحليل مفعّلة");
-  setLog("💬 سجل التعليقات: لم يتم تسجيل أي نتيجة حتى الآن.");
+let result=document.getElementById("result");
 
-  chosenEl.textContent="—";
-  statusEl.textContent="اختر اسمًا لعرض التقييم";
-  ratingEl.textContent="--";
-  ratingEl.className="rating";
-  badgeEl.textContent="—";
-  badgeEl.className="rating";
-  lastEventEl.textContent="—";
+result.innerHTML="<h2>🏆 الفرق</h2>";
 
-  closeModal();
-  whistle();
-});
+let teamNumber=1;
 
-/* ESC */
-window.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') closeModal(); });
+let reserve=null;
+
+if(players.length%2==1){
+
+reserve=players.pop();
+
+}
+
+for(let i=0;i<players.length;i+=2){
+
+result.innerHTML+=`
+
+<div class="team">
+
+⚽ الفريق ${teamNumber}<br>
+
+${players[i]} + ${players[i+1]}
+
+</div>
+
+`;
+
+teamNumber++;
+
+}
+
+if(reserve){
+
+result.innerHTML+=`
+
+<div class="reserve">
+
+🚨 اللاعب الاحتياط: ${reserve}
+
+</div>
+
+`;
+
+}
+
+}
+
 </script>
+
 </body>
 </html>
